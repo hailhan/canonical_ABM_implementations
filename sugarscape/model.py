@@ -5,7 +5,7 @@ import numpy as np
 import mesa
 from agents import SugarAgent
 ## Using experimental cell space for this model that enforces von Neumann neighborhoods
-from mesa.experimental.cell_space import OrthogonalVonNeumannGrid
+from mesa.experimental.cell_space import OrthogonalVonNeumannGrid 
 ## Use experimental space feature that allows us to save sugar as a property of the grid spaces
 from mesa.experimental.cell_space.property_layer import PropertyLayer
 
@@ -29,7 +29,8 @@ class SugarScapeModel(mesa.Model):
         metabolism_max=5,
         vision_min=1,
         vision_max=5,
-        seed = None
+        seed = None,
+        age_of_consent=10
     ):
         super().__init__(seed=seed)
         ## Instantiate model parameters
@@ -41,15 +42,19 @@ class SugarScapeModel(mesa.Model):
         self.grid = OrthogonalVonNeumannGrid(
             (self.width, self.height), torus=False, random=self.random
         )
+
         ## Define datacollector, which calculates current Gini coefficient
         self.datacollector = mesa.DataCollector(
-            model_reporters = {"Gini": self.calc_gini},
+            model_reporters = {"Gini": self.calc_gini,
+                               "Average Age": lambda m: np.mean([a.age for a in m.agents]),
+                               "Population": lambda m: len(m.agents)},
         )
         ## Import sugar distribution from raster, define grid property
         self.sugar_distribution = np.genfromtxt(Path(__file__).parent / "sugar-map.txt")
         self.grid.add_property_layer(
             PropertyLayer.from_data("sugar", self.sugar_distribution)
         )
+        self.age_of_consent = age_of_consent # age at which agents can become fertile
         ## Create agents, give them random properties, and place them randomly on the map
         SugarAgent.create_agents(
             self,
@@ -74,6 +79,13 @@ class SugarScapeModel(mesa.Model):
         )
         self.agents.shuffle_do("move")
         self.agents.shuffle_do("gather_and_eat")
+        self.agents.shuffle_do("reproduce")
+        self.agents.shuffle_do("determine_fertility")
         self.agents.shuffle_do("see_if_die")
+        for agent in self.agents:
+            agent.age += 1  # agents age by one step
+        for agent in self.agents:
+            if agent.cell is None:
+                print(f"Agent {agent} has no cell assigned!")
         self.datacollector.collect(self)
     

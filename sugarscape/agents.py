@@ -17,8 +17,12 @@ class SugarAgent(CellAgent):
         ## Set variable traits based on model parameters
         self.cell = cell
         self.sugar = sugar
+        self.init_sugar = sugar  # store initial sugar for fertility
         self.metabolism = metabolism
         self.vision = vision
+        self.age = 0 # age for determining fertility
+        self.fertility = False # agents are not fertile by default
+        self.sex = model.random.randint(0, 1) # agent sex is randomly assigned with equal probability (0=female, 1=male)
     ## Define movement action
     def move(self):
         ## Determine currently empty cells within line of sight
@@ -33,6 +37,8 @@ class SugarAgent(CellAgent):
             for cell in possibles
         ]
         ## Calculate the maximum possible sugar value in possible targets
+        if not sugar_values:
+            return
         max_sugar = max(sugar_values)
         ## Get indices of cell(s) with maximum sugar potential within range
         candidates_index = [
@@ -61,6 +67,44 @@ class SugarAgent(CellAgent):
     def see_if_die(self):
         if self.sugar <= 0:
             self.remove()
-    
-    
-        
+
+    def determine_fertility(self):
+        # agents must be at least as old as the age of consent and have at least their initial sugar holdings to be fertile
+        if self.sugar >= self.init_sugar and self.age >= self.model.age_of_consent:
+            self.fertility = True
+        else:
+            self.fertility = False
+
+    def reproduce(self):
+        if self.fertility:
+            # select a random neighbor agent at random
+            neighbor_cells = self.cell.get_neighborhood(include_center=False)
+            potential_partners = [
+                agent for cell in neighbor_cells for agent in cell.agents
+                if isinstance(agent, SugarAgent)  # optional safety check
+                ]
+            # fertile agents will try to reproduce with ALL neighbors
+            for partner in potential_partners:
+                # if the selected neighbor is fertile and the opposite sex from current agent, then reproduction happens
+                if partner.fertility and partner.sex != self.sex:
+                    empty_neighbors = [cell for cell in self.cell.get_neighborhood(1, include_center=False) if cell.is_empty]
+                    if empty_neighbors:
+                        baby_cell = self.random.choice(empty_neighbors)
+                    else:
+                        baby_cell = self.cell  # fallback if no room
+                    # create offspring agent with average properties of both parents
+                    offspring = SugarAgent(
+                        model=self.model,
+                        cell=baby_cell,
+                        sugar=((self.sugar/2) + (partner.sugar/2)),
+                        metabolism= self.model.random.choice([self.metabolism, partner.metabolism]),
+                        vision=self.model.random.choice([self.vision, partner.vision]),
+                    )
+                    baby_cell.add_agent(offspring)
+                    self.model.agents.add(offspring)
+                    # after reproduction, the agents will lose the amount of sugar they gave to their offspring
+                    self.sugar -=self.sugar/2
+                    partner.sugar -= partner.sugar/2
+            if self.sugar < self.init_sugar:
+                # if the agent has less than initial sugar after each reproduction, it will not be able to reproduce with any remaining partners
+                self.fertility = False
