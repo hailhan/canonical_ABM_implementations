@@ -2,7 +2,8 @@ import solara
 from model import CultureModel
 from mesa.visualization import (
     SolaraViz,
-    make_space_component
+    make_space_component,
+    make_plot_component
 )
 
 def culture_to_color(features):
@@ -21,6 +22,9 @@ def agent_portrayal(agent):
         "h": 1,
     }
 
+RegionPlot = make_plot_component("region_counts")
+
+
 model_params = {
     "seed": {
         "type": "InputText",
@@ -34,7 +38,7 @@ culture_space = make_space_component(agent_portrayal=agent_portrayal)
 
 page = SolaraViz(
     culture_model,
-    components=[culture_space],
+    components=[culture_space, RegionPlot],
     model_params=model_params,
     name="Culture Model"
 )
