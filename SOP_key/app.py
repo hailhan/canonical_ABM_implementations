@@ -7,6 +7,7 @@ from mesa.visualization import (
     make_plot_component
 )
 
+# agents are portrayed as blue squares if standing and red squares if sitting
 def agent_portrayal(agent):
     return {
         "color": "blue" if agent.standing else "red",
@@ -14,8 +15,10 @@ def agent_portrayal(agent):
         "size": 40,
     }
 
+# create a plot component to visualize the proportion of agents acting against their instinct
 InstinctPlot = make_plot_component("proportion_against_instinct")
 
+# define model parameters for the Solara interface
 model_params = {
     "seed": {
         "type": "InputText",
@@ -36,14 +39,16 @@ model_params = {
     }
 }
 
+# create the space component to visualize the grid of agents
 space = make_space_component(agent_portrayal=agent_portrayal)
 sop_model = SOPModel()
 
+# create the Solara page with the model, space, and plot components
 page = SolaraViz(
     model=sop_model,
     model_params=model_params,
     components=[space, InstinctPlot],
     name="Standing Ovation Problem",
 )
-## Return page
+## return page
 page
