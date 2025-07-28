@@ -3,7 +3,8 @@ from model import SOPModel
 from agents import AudienceMember
 from mesa.visualization import (
     SolaraViz,
-    make_space_component
+    make_space_component,
+    make_plot_component
 )
 
 def agent_portrayal(agent):
@@ -12,6 +13,8 @@ def agent_portrayal(agent):
         "marker": "s",
         "size": 40,
     }
+
+InstinctPlot = make_plot_component("proportion_against_instinct")
 
 model_params = {
     "seed": {
@@ -39,7 +42,7 @@ sop_model = SOPModel()
 page = SolaraViz(
     model=sop_model,
     model_params=model_params,
-    components=[space],
+    components=[space, InstinctPlot],
     name="Standing Ovation Problem",
 )
 ## Return page

@@ -1,5 +1,6 @@
 from mesa import Model
 from mesa.space import SingleGrid
+from mesa.datacollection import DataCollector
 from agents import AudienceMember
 
 
@@ -18,6 +19,24 @@ class SOPModel(Model):
 
         self.init_agents()
 
+        self.datacollector = DataCollector(
+            model_reporters={
+                "proportion_against_instinct": lambda m:m.proportion_against_instinct()
+            }
+        )
+
+    def proportion_against_instinct(self):
+        # measures the proportion of agents that are acting opposite their enjoyment
+        total = len(self.agent_list)
+        if total == 0:
+           return 0
+        against_instinct = sum(
+            (agent.enjoyment < 0.5 and agent.standing) or
+            (agent.enjoyment > 0.5 and not agent.standing)
+            for agent in self.agent_list
+            )
+        return against_instinct / total
+    
     def init_agents(self):
         agent_id = 0
         for x in range(self.width):
@@ -52,3 +71,5 @@ class SOPModel(Model):
             )
             for agent in sorted_agents:
                 agent.step()
+                
+        self.datacollector.collect(self)
