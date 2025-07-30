@@ -84,8 +84,4 @@ class SugarScapeModel(mesa.Model):
         self.agents.shuffle_do("see_if_die")
         for agent in self.agents:
             agent.age += 1  # agents age by one step
-        for agent in self.agents:
-            if agent.cell is None:
-                print(f"Agent {agent} has no cell assigned!")
         self.datacollector.collect(self)
-    

@@ -66,8 +66,12 @@ class SugarAgent(CellAgent):
     ## If an agent has zero or negative suger, it dies and is removed from the model
     def see_if_die(self):
         if self.sugar <= 0:
-            self.remove()
+            # added additional check to handle "ghost" agents
+            if self.cell is not None:
+                self.cell.remove_agent(self)
+            self.model.agents.remove(self)
 
+    ## Functions for reproduction
     def determine_fertility(self):
         # agents must be at least as old as the age of consent and have at least their initial sugar holdings to be fertile
         if self.sugar >= self.init_sugar and self.age >= self.model.age_of_consent:
