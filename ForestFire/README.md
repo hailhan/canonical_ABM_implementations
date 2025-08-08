@@ -1,0 +1,1 @@
+The files in this repository contain the necessary code for an implementation of [this version](https://rf.mokslasplius.lt/forest-fire-model/#Drossel1992PRL) of Drossel & Schwabl's (1992) Forest Fire Model.
