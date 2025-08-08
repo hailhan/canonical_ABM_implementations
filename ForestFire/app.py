@@ -40,6 +40,11 @@ model_params = {
         "type": "SliderInt",
         "value": 10,
         "label": "Forest Height",
+    },
+    "seed": {
+        "type": "InputText",
+        "value": 42,
+        "label": "Random Seed",
     }
 }
 
