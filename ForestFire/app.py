@@ -14,7 +14,7 @@ def ff_agent_portrayal(agent):
         else "orange" if agent.state == 'Burning' 
         else "black", # empty state is black
         "marker": "s",
-        "size": 50,
+        "size": 100,
     }
 
 # create plot components for the model reporters
@@ -30,6 +30,16 @@ model_params = {
         "min": 0.0,
         "max": 1.0,
         "step": 0.05
+    },
+    "width": {
+        "type": "SliderInt",
+        "value": 10,
+        "label": "Forest Width",
+    },
+    "height": {
+        "type": "SliderInt",
+        "value": 10,
+        "label": "Forest Height",
     }
 }
 
