@@ -1,0 +1,1 @@
+This repository contains the code necessary to run a mesa implementation of the El Farol bar model, based on [this NetLogo implementation](https://ccl.northwestern.edu/netlogo/models/ElFarol) of the original Arthur (1994) model.
