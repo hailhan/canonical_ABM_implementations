@@ -10,10 +10,13 @@ class ElFarolAgent(Agent):
         self.home_pos = home_pos
         self.bar_pos = bar_pos
 
-    def predict(self):
+    def decide(self):
         history = self.model.history
-        self.prediction = self.predict_attendance(self.best_strategy, history[:self.model.memory_size])
-        self.attend = self.prediction <= self.model.overcrowding_threshold
+        self.prediction = self.predict_attendance(
+            self.best_strategy, 
+            history[:self.model.memory_size])
+        # agents attend if their prediction is less than or equal to the standard enjoyment threshold
+        self.attend = self.prediction <= 0.6
 
     def advance(self):
         # Move agent to their unique home or bar position
@@ -33,7 +36,10 @@ class ElFarolAgent(Agent):
         for strategy in self.strategies:
             score = 0
             for week in range(1, self.model.memory_size + 1):
-                prediction = self.predict_attendance(strategy, self.model.history[week:week + self.model.memory_size])
+                prediction = self.predict_attendance(strategy, 
+                                                     self.model.history[
+                                                         week:week + self.model.memory_size
+                                                         ])
                 actual = self.model.history[week - 1]
                 score += abs(actual - prediction)
             if score <= best_score:
@@ -44,5 +50,7 @@ class ElFarolAgent(Agent):
     def predict_attendance(self, strategy, subhistory):
         const = strategy[0]
         weights = strategy[1:]
-        weighted_sum = sum(w * x for w, x in zip(weights, subhistory))
+        weighted_sum = sum(w * x for w, x in zip(
+            weights, 
+            subhistory))
         return 100 * const + weighted_sum
