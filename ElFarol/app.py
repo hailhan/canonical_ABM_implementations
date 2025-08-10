@@ -7,7 +7,6 @@ def ef_agent_portrayal(agent):
         "color": "red" if agent.attend else "blue",
         "marker": "^",
         "size": 15,  # smaller size
-        "alpha": 0.6,  # semi-transparent if supported
     }
 
 model_params = {
@@ -47,22 +46,6 @@ model_params = {
         "min": 0.0,
         "max": 1.0,
         "step": 0.05,
-    },
-    "width": {
-        "type": "SliderInt",
-        "value": 10,
-        "label": "Grid Width",
-        "min": 5,
-        "max": 50,
-        "step": 1,
-    },
-    "height": {
-        "type": "SliderInt",
-        "value": 10,
-        "label": "Grid Height",
-        "min": 5,
-        "max": 50,
-        "step": 1,
     },
 }
 

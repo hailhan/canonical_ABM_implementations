@@ -1,12 +1,14 @@
 from mesa import Agent
 
 class ElFarolAgent(Agent):
-    def __init__(self, model, strategies):
+    def __init__(self, model, strategies, home_pos, bar_pos):
         super().__init__(model)
         self.strategies = strategies
         self.best_strategy = strategies[0]
         self.attend = False
         self.prediction = 0
+        self.home_pos = home_pos
+        self.bar_pos = bar_pos
 
     def predict(self):
         history = self.model.history
@@ -14,9 +16,8 @@ class ElFarolAgent(Agent):
         self.attend = self.prediction <= self.model.overcrowding_threshold
 
     def advance(self):
-        # Step 2: Decide whether to attend and move
-        locations = self.model.bar if self.attend else self.model.homes
-        new_pos = self.random.choice(locations)
+        # Move agent to their unique home or bar position
+        new_pos = self.bar_pos if self.attend else self.home_pos
         self.model.grid.move_agent(self, new_pos)
 
         # Update attendance count
