@@ -19,7 +19,7 @@ class SIRModel(Model):
         # create a list to hold agents (instead of scheduler)
         self.agent_list = []
 
-        # place agents
+        # randomly place agents, states determined by infected_density
         for _, pos in self.grid.coord_iter():
             if self.random.random() < self.infected_density:
                 agent = SIRAgent(self, 'I')

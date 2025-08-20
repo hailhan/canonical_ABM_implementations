@@ -13,7 +13,7 @@ def sir_agent_portrayal(agent):
         else "red" if agent.state == 'I' 
         else "purple", # both "R" and "V" states are purple
         "marker": "s",
-        "size": 10,
+        "size": 50,
     }
 
 # create plot components for the model reporters
