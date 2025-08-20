@@ -10,10 +10,9 @@ class CultureModel(Model):
         self.width = width
         self.height = height
         self.grid = SingleGrid(width, height, torus=False)
-        # create a list to hold the number of cultural regions (for model reporting)
-        self.region_counts = []
         # create a list to hold agents
         self.agent_list = []
+        
         # place agents
         for _, pos in self.grid.coord_iter():
             agent = CultureAgent(self)
@@ -30,10 +29,10 @@ class CultureModel(Model):
         # function for data collection to count cultural regions
         visited = set()
         regions = 0
-        # sub-function to perform depth-first search (DFS) to count regions
+        
         def dfs(pos, target_features):
-            # create a stack to provide structure to region count procedure
-            stack = [pos]
+            # sub-function to perform depth-first search (DFS) to count regions
+            stack = [pos] # stack structures region count procedure
             while stack:
                 current = stack.pop()
                 if current in visited:
