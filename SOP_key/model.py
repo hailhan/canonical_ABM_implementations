@@ -5,8 +5,27 @@ from agents import AudienceMember
 
 
 class SOPModel(Model):
+    # model reporter helper functions
+    def majority_action(self):
+        # determines the majority action (standing or sitting) in the model
+        standing = sum(agent.standing for agent in self.agent_list)
+        sitting = len(self.agent_list) - standing
+        return 1 if standing > sitting else 0  # 1=standing, 0=sitting
+
+    def stick_in_the_muds(self):
+        # calculates the proportion of agents in the minority action
+        majority = self.majority_action()
+        if majority == 1:
+            return sum(not agent.standing for agent in self.agent_list) / len(self.agent_list)
+        else:
+            return sum(agent.standing for agent in self.agent_list) / len(self.agent_list)
+
+    def informational_efficiency(self, initial_majority):
+        # Returns 1 if majority matches initial, else 0
+        return int(self.majority_action() == initial_majority)
+
     update_order = ["Sync", "AsyncRandom", "AsyncIncentive"] # define possible update orders
-    
+
     def init_agents(self):
         # initialize agents in the grid
         agent_id = 0
@@ -25,13 +44,13 @@ class SOPModel(Model):
 
     def __init__(self, width=20, height=20, update="Sync", neighbor_structure="five", seed=None):
         super().__init__(seed=seed)
-        self.width = width
-        self.height = height
         self.update = update
         self.neighbor_structure = neighbor_structure
         # establish grid properties
+        self.width = width
+        self.height = height
         self.grid = SingleGrid(width, height, torus=False)
-        self.agent_list = []  # Renamed to avoid conflict with Mesa internals
+        self.agent_list = []
         
         # initialize agents by placing them in the grid
         self.init_agents()
@@ -39,7 +58,9 @@ class SOPModel(Model):
         # set up data collector to gather model statistics
         self.datacollector = DataCollector(
             model_reporters={
-                "proportion_against_instinct": lambda m:m.proportion_against_instinct()
+                "proportion_against_instinct": lambda m:m.proportion_against_instinct(),
+                "majority_action": lambda m: m.majority_action(),
+                "stick_in_the_muds": lambda m: m.stick_in_the_muds(),
             }
         )
 

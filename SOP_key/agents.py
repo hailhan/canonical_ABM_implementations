@@ -10,61 +10,53 @@ class AudienceMember(Agent):
         self.neighbors = [] # initialize neighbor list as a stored agent feature (since agents don't move, neighbors don't change)
 
     def get_neighbors(self):
-        # determine agent neighbors based on structure
+        # create a function to facilitate neighbor lookup based on the chosen structure
         x, y = self.pos
         grid = self.model.grid
-        if self.structure == "five":
-            # five-neighbor structure is the agents to the E, W, NE, NW, and N of the agent
-            coords = [(x, y + 1), 
-                         (x + 1, y + 1), 
-                         (x + 1, y), 
-                         (x - 1, y), 
-                         (x - 1, y + 1)]
-        else:
-            # cone structure includes five neighbors plus the 5 agents two rows ahead and the 7 agents three rows ahead
-            coords = [(x, y + 1), 
-                      (x + 1, y + 1), 
-                      (x + 1, y), 
-                      (x - 1, y), 
-                      (x - 1, y + 1),
-                      (x, y + 2),
-                      (x + 1, y + 2),
-                      (x + 2, y + 2),
-                      (x - 1, y + 2),
-                      (x - 2, y + 2),
-                      (x, y + 3),
-                      (x+1, y+3),
-                      (x+2, y+3),
-                      (x+3, y+3),
-                      (x-1, y+3),
-                      (x-2, y+3),
-                      (x-3, y+3)]
-        
-        # filter valid positions and retrieve agents
-        for coord in coords:
+
+        # define offsets for each structure
+        offsets_five = [
+            (0, 1),    # N
+            (1, 1),    # NE
+            (1, 0),    # E
+            (-1, 0),   # W
+           (-1, 1),   # NW
+        ]
+        offsets_cones = offsets_five + [
+            (0, 2), (1, 2), (2, 2), (-1, 2), (-2, 2),   # two rows ahead
+            (0, 3), (1, 3), (2, 3), (3, 3), (-1, 3), (-2, 3), (-3, 3)  # three rows ahead
+        ]
+
+        # select offsets based on structure
+        offsets = offsets_five if self.structure == "five" else offsets_cones
+
+        self.neighbors = []  # reset neighbor list
+        for dx, dy in offsets:
+            coord = (x + dx, y + dy)
             if not grid.out_of_bounds(coord):
                 agents_in_cell = grid.get_cell_list_contents([coord])
-                self.neighbors.extend(agents_in_cell) # add neighbors to agent's neighbor list
+                self.neighbors.extend(agents_in_cell)
     
+    # these look redundant, but are necessary for different update orders (see implementation in model.py)
     def evaluate(self):
         # evaluate whether the agent should stand based on neighbors' standing behavior
         standing_neighbors = sum(neighbor.standing for neighbor in self.neighbors)
         return standing_neighbors > len(self.neighbors) / 2
     
-    def determine_new_state(self):
+    def determine_new_state(self): # for asynchronous updates
         # determine the new state based on the evaluation
         self.new_state = self.evaluate()
 
-    def update_state(self):
+    def update_state(self): # for asynchronous updates
         # update the agent's standing state based on the new state
         self.standing = self.new_state
 
-    def step(self):
-        # determine the new state and update standing
+    def step(self): # for synchronous updates
+        # determine the new state and update standing simultaneously
         new_state = self.evaluate()
         self.standing = new_state
 
-    def dissatisfaction(self):
+    def dissatisfaction(self): # for incentive-based updates
         # calculate dissatisfaction based on whether the agent is standing against its enjoyment
         desired_state = self.evaluate()
         return int(self.standing != desired_state)

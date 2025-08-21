@@ -4,7 +4,7 @@ This directory contains the relevant files for a Mesa implementation of Miller &
 
 ## Suggestions for implementation in MACSS 40550
 
-Students can build this model from scratch, based on pgs. 14-15 of the Miller & Page article already assigned in the syllabus. The challenge for this model is figuring out which model reporters to utilize, and how to incorporate them into the model datacollector. This would be a great opportunity for students to get comfortable with batch runs. Students should try to figure out how to measure IE, SIM, and NI through their batch runs.
+Students can build this model from scratch, based on pgs. 14-15 of the Miller & Page article already assigned in the syllabus. The challenge for this model is figuring out which model reporters to utilize, and how to incorporate them into the datacollector/batch runner. This would be a great opportunity for students to get comfortable with batch runs. Students should try to figure out how to measure IE, SIM, and NI through their batch runs. Defining and calculating equilibrium, in particular, will pose an implementation challenge to students. Example calculations for these values can be found in [model.py](SOP_key/model.py), as well as in [results.ipynb](SOP_key/results.ipynb).
 
 ## How to Run
 
@@ -19,3 +19,6 @@ To run the model interactively once you have a complete agents file, run the fol
 * ``agents.py``: Contains the agent class
 * ``model.py``: Contains the model class
 * ``app.py``: Defines classes for visualizing the model in the browser via Solara, and instantiates a visualization server.
+* ``batch_runner.py``: Shows an example parameter sweep setup using mesa's batch runner.
+* ``batch_results.csv``: Contains example output from running batch_runner.py.
+* ``results.ipynb``: Shows the process of calculation of IE, SM, and NI from the results of the batch runner.
