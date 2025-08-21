@@ -29,13 +29,13 @@ model_params = {
         "type": "Select",
         "value": "five",
         "label": "Neighbor Structure",
-        "values": AudienceMember.neighbor_structure,
+        "values": ["five", "cones"],
     },
     "update": {
         "type": "Select",
         "value": "Sync",
         "label": "Update Order",
-        "values": SOPModel.update_order,
+        "values": ["Sync", "AsyncRandom", "AsyncIncentive"],
     }
 }
 

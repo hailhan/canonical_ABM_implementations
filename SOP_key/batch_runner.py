@@ -16,11 +16,10 @@ if __name__ == '__main__':
     results = batch_run(
         SOPModel,
         parameters=params,
-        max_steps=200,  # Maximum number of steps for each run
-        number_processes=8,  # Number of parallel processes to use
+        number_processes=8, 
         display_progress=True,  # Show progress bar
-        data_collection_period=1,  # Collect data every step
-        iterations=100,  # Number of iterations for each parameter combination
+        data_collection_period=-1,
+        iterations=10,  # Number of iterations for each parameter combination
     )
     
     # Write results to a CSV file

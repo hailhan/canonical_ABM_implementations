@@ -6,6 +6,8 @@ This directory contains the relevant files for a Mesa implementation of Miller &
 
 Students can build this model from scratch, based on pgs. 14-15 of the Miller & Page article already assigned in the syllabus. The challenge for this model is figuring out which model reporters to utilize, and how to incorporate them into the datacollector/batch runner. This would be a great opportunity for students to get comfortable with batch runs. Students should try to figure out how to measure IE, SIM, and NI through their batch runs. Defining and calculating equilibrium, in particular, will pose an implementation challenge to students. Example calculations for these values can be found in [model.py](SOP_key/model.py), as well as in [results.ipynb](SOP_key/results.ipynb).
 
+*Note: this version of the model seems to always converge on unanimity (ie. SM is always 0 and IE is always 1), likely due to its definition of equilibrium. While this isn't ideal for an actual implementation of the SOP, it could be an interesting exercise to have students try to identify why this is happening, or have them see what they can do to generate more heteogeneity in outcomes. Some examples of implementation changes include: different calculations of equilibrium, introducing randomness to agent decision-making (like random behavioral shocks), etc.*
+
 ## How to Run
 
 To run the model interactively once you have a complete agents file, run the following code in this directory:

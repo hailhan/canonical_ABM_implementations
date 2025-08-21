@@ -1,10 +1,10 @@
 from mesa import Agent
 
 class AudienceMember(Agent):
-    neighbor_structure = ["five", "cones"] # establish possible neighbor structures
-    def __init__(self, model, neighbor_structure="five"):
+    
+    def __init__(self, model):
         super().__init__(model)
-        self.structure = neighbor_structure
+        self.structure = model.structure
         self.enjoyment = model.random.uniform(0, 1) # agent's instinctive enjoyment of the performance (greater than 0.5 means they enjoy it)
         self.standing = self.enjoyment > 0.5 # agent's initial behavior (standing or sitting) determined by enjoyment
         self.neighbors = [] # initialize neighbor list as a stored agent feature (since agents don't move, neighbors don't change)
@@ -42,21 +42,21 @@ class AudienceMember(Agent):
         # evaluate whether the agent should stand based on neighbors' standing behavior
         standing_neighbors = sum(neighbor.standing for neighbor in self.neighbors)
         return standing_neighbors > len(self.neighbors) / 2
-    
-    def determine_new_state(self): # for asynchronous updates
+
+    def determine_new_state(self): # for synchronous updates
         # determine the new state based on the evaluation
         self.new_state = self.evaluate()
 
-    def update_state(self): # for asynchronous updates
+    def update_state(self): # for synchronous updates
         # update the agent's standing state based on the new state
         self.standing = self.new_state
 
-    def step(self): # for synchronous updates
+    def determine_update(self): # for asynchronous updates
         # determine the new state and update standing simultaneously
         new_state = self.evaluate()
         self.standing = new_state
 
-    def dissatisfaction(self): # for incentive-based updates
-        # calculate dissatisfaction based on whether the agent is standing against its enjoyment
+    def dissonance(self): # for incentive-based updates
+        # calculate dissonance based on whether the agent is standing against its enjoyment
         desired_state = self.evaluate()
         return int(self.standing != desired_state)
