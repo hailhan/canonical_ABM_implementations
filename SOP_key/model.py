@@ -72,6 +72,8 @@ class SOPModel(Model):
         # detect steady state or cycles and compute NI, SM, and IE if steady state is reached
         current_state = tuple(agent.standing for agent in self.agent_list)
         if current_state in self.previous_states:
+            # if the current state has been seen before, there is a cycle of equilibrium
+            # this strategy likely causes the model to detect equilibrium too strictly and end prematurely
             if not self.steady_state_reached:
                 self.num_ticks_to_steady = len(self.previous_states)
                 self.steady_state_reached = True
